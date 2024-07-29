@@ -1,0 +1,4 @@
+{
+  "preset": "./jest.config.base.json",
+  "projects": ["./jest.config.unit.json", "./jest.config.int.json"]
+}

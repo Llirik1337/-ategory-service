@@ -1,0 +1,36 @@
+{
+  "preset": "ts-jest",
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": ".",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "collectCoverageFrom": ["**/*.(t|j)s"],
+  "passWithNoTests": true,
+  "coverageDirectory": "./coverage",
+  "testEnvironment": "node",
+  "roots": ["<rootDir>/apps/", "<rootDir>/libs/"],
+  "moduleNameMapper": {
+    "^@app/(.*)(|/.*)$": "<rootDir>/libs/$1/src/$2"
+  },
+  "coveragePathIgnorePatterns": [
+    "node_modules",
+    "test-config",
+    "interfaces",
+    ".module.ts",
+    "main.ts",
+    "index.ts",
+    ".mock.ts",
+    ".spec.ts",
+    ".e2e-spec.ts",
+    ".faker.ts",
+    "libs/utils",
+    "events.ts",
+    "commands.ts",
+    ".dto.ts",
+    ".d.ts"
+  ],
+  "detectOpenHandles": true,
+  "mapCoverage": true,
+  "setupFilesAfterEnv": ["<rootDir>/jest.setup.ts"]
+}

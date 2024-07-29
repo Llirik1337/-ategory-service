@@ -1,0 +1,13 @@
+FROM node:18.17.1
+WORKDIR /app
+
+RUN apt-get update &&\
+  rm -rf /usr/local/go &&\
+  wget --progress=dot:giga https://golang.org/dl/go1.21.3.linux-amd64.tar.gz &&\
+  tar -C /usr/local -xzf go1.21.3.linux-amd64.tar.gz &&\
+  echo "export GOROOT=/usr/local/go" >>  /etc/profile &&\
+  cat /etc/profile
+
+ENV PATH="$PATH:/usr/local/go/bin"
+
+USER node

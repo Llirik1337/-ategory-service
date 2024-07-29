@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  gateway:
+    build:
+      context: .
+      args:
+        app: 'gateway'
+    env_file:
+      - 'docker-compose.env'
+    ports:
+      - '3000:3000'
+  user:
+    build:
+      context: .
+      args:
+        app: 'user'
+    env_file:
+      - 'docker-compose.env'
