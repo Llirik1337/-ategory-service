@@ -2,30 +2,33 @@ import { TypedConfigModule } from '@app/common';
 import { ExtendedLoggerModule, ExtendedLoggerService } from '@app/logger';
 import { MessageBusConfig, MessageBusModule } from '@app/message-bus';
 import { ExtendedMongodbModule } from '@app/mongodb';
-import { category, SharedModule } from '@app/shared';
+import { SharedModule } from '@app/shared';
 import { Module, type INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Transport, type MicroserviceOptions } from '@nestjs/microservices';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MongodbModule } from 'nestjs-mongodb-native';
+import { AppController } from './app.controller';
 import { Config } from './config';
-import * as controllers from './controllers';
+import * as repositories from './repositories';
+import * as services from './services';
 
 @Module({
   imports: [
     SharedModule,
-    ExtendedLoggerModule.registry({ serviceName: `GATEWAY` }),
-    MessageBusModule.registry({ queue: `GATEWAY` }),
     TypedConfigModule.registry(Config),
-    category.CategoryModule,
+    ExtendedLoggerModule.registry({ serviceName: `category` }),
+    MessageBusModule.registry({
+      queue: `category`,
+    }),
     ExtendedMongodbModule.register({
-      dataBase: `gateway`,
+      dataBase: `category`,
     }),
     MongodbModule.forFeature({
-      collectionName: `users`,
+      collectionName: `categories`,
     }),
   ],
-  controllers: Object.values(controllers),
+  controllers: [AppController],
+  providers: [...Object.values(services), ...Object.values(repositories)],
 })
 export class AppModule {
   static async bootstrap(): Promise<INestApplication> {
@@ -33,12 +36,11 @@ export class AppModule {
       bufferLogs: true,
     });
 
-    const natsConfig = app.get(MessageBusConfig);
-    const appConfig = app.get(Config);
-
     const logger = app.get(ExtendedLoggerService);
 
     app.useLogger(logger);
+
+    const natsConfig = app.get(MessageBusConfig);
 
     app.connectMicroservice<MicroserviceOptions>(
       {
@@ -50,16 +52,8 @@ export class AppModule {
       { inheritAppConfig: true },
     );
 
-    const config = new DocumentBuilder()
-      .setTitle(`The category API`)
-      .setVersion(`1.0`)
-      .build();
-
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup(`api`, app, document);
-
+    await app.init();
     await app.startAllMicroservices();
-    await app.listen(appConfig.port);
 
     return app;
   }

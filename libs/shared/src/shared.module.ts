@@ -4,9 +4,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
+import { ExtendedExceptionFilter } from './extended-exception.filter';
 import { L, LoggingInterceptor } from '@app/logger';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
-import { ExtendedExceptionFilter } from './extended-exception.filter';
 
 @Module({
   providers: [

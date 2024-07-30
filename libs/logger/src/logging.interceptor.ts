@@ -18,7 +18,12 @@ import { asyncLocalStorage } from './async-local-storage';
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    return this[context.getType()](context, next);
+    try {
+      return this[context.getType()](context, next);
+    } catch (error) {
+      L().error(`LoggingInterceptor`, error);
+      return next.handle();
+    }
   }
 
   rpc(context: ExecutionContext, next: CallHandler): Observable<any> {

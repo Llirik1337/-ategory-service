@@ -1,10 +1,9 @@
-import type * as user from './user';
+import type * as category from './category';
 
-export type CommandsType = user.CommandsType;
-
-export type EventsType = user.EventsType;
-
-export * as sharedUser from './user';
-export * from './shared.module';
-export * from './errors';
 export * from './extended-exception.filter';
+export * from './shared.module';
+export * from './base.error';
+export * as category from './category';
+
+export type CommandsType = category.CommandsType;
+export type EventsType = category.EventsType;

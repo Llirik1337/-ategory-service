@@ -3,17 +3,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { L } from '@app/logger';
 import { type ArgumentsHost, Catch } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { type NatsContext } from '@nestjs/microservices';
 import { type Request, type Response } from 'express';
 import { type Observable, throwError } from 'rxjs';
-import { type BaseError } from './base-error';
-import * as errors from './errors';
+import { L } from '@app/logger';
+import { type BaseError } from './base.error';
+import * as categoryErrors from './category/errors';
 
 const errorsMap = new Map(
-  Object.values(errors).map((error) => [error.name, error]),
+  [...Object.values(categoryErrors)].map((error) => [error.name, error]),
 );
 
 @Catch()
@@ -68,6 +68,9 @@ export class ExtendedExceptionFilter extends BaseExceptionFilter {
       L().log(`NATS Response ${context.getSubject()}`, exception);
 
       super.catch(exception, host);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      return;
     }
 
     L().log(`NATS Response ${context.getSubject()}`, errorData);
