@@ -9,10 +9,10 @@ services:
       - 'docker-compose.env'
     ports:
       - '3000:3000'
-  user:
+  category:
     build:
       context: .
       args:
-        app: 'user'
+        app: 'category'
     env_file:
       - 'docker-compose.env'
